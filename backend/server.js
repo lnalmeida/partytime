@@ -8,7 +8,7 @@ const cors = require("cors");
 
 
 //middlewares
-
+const authRouter = require("./routes/authRoutes.js")
 
 //config
 const dbName = "parttimedb";
@@ -20,10 +20,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
+//use routes
+app.use("/api/auth", authRouter);
+
+// mongoose connection
+mongoose.connect(`mongodb+srv://pt_admin:Password%40123@cluster0.ownj9mm.mongodb.net/${dbName}?retryWrites=true&w=majority`);
 
 
-app.get("/", (req, res) => {
-    res.json({message: "Test route OK"});
+app.get("/apitest", (req, res) => {
+    res.status(400).json({message: "Test route OK"});
 })
 
 
