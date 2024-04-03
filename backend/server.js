@@ -8,7 +8,10 @@ const cors = require("cors");
 
 
 //middlewares
-const authRouter = require("./routes/authRoutes.js")
+const authRouter = require("./routes/authRoutes.js");
+const userRouter = require("./routes/userRoutes.js");
+const partyRouter = require("./routes/partyRoutes.js");
+
 
 //config
 const dbName = "parttimedb";
@@ -22,6 +25,8 @@ app.use(express.json());
 app.use(express.static("public"));
 //use routes
 app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/parties", partyRouter);
 
 // mongoose connection
 mongoose.connect(`mongodb+srv://pt_admin:Password%40123@cluster0.ownj9mm.mongodb.net/${dbName}?retryWrites=true&w=majority`);

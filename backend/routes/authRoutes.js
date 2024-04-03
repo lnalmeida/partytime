@@ -1,8 +1,12 @@
 const router = require("express").Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const handlePassword = require("../helpers/handle-password");
+require("dotenv").config();
 
 const User = require("../models/user");
+
+const secret = process.env.JWT_SECRET;
 
 // register a new user
 router.post("/register", async (req, res) => {
@@ -22,8 +26,8 @@ router.post("/register", async (req, res) => {
         return res.status(400).json({error: "E-mail already in use!."});
     }
     //create password
-    const salt = await bcrypt.genSalt(12);
-    const passwordHash = await bcrypt.hash(password, salt);
+    const passwordHash = await handlePassword.encodePassword(password);
+
 
     //registering a new user in Mongo
     const user = new User({
@@ -42,16 +46,43 @@ router.post("/register", async (req, res) => {
                 name: newUser.name,
                 id: newUser._id
             }, 
-            "mySecretKey"
+            secret
         );
         //return token
-        res.json({error: null, message: "Registration successfully complete!!", token: token, userId: newUser._id});
+        res.status(201).json({error: null, message: "Registration successfully complete!!", token: token, userId: newUser._id});
 
     } catch (error) {
         res.status(400).json({error: error});
-    }
-
+    };
 
 });
+
+router.post("/login", async (req, res) => {
+    const {email, password} = req.body;
+    const user = await User.findOne({email: email});
+    if(!user){
+        return res.status(404).json({error: "There is no registered user with this email."});
+    };
+
+    const verifiedPassword = await handlePassword.decodePassword(password, user.password);
+
+    if(!verifiedPassword) {
+        return res.status(400).json({error: "The password is incorrect."});
+    };
+    //create token
+    const token = jwt.sign(
+        //payload
+        {
+            email: user.name,
+            id: user._id
+        }, 
+        secret
+    );
+    //return token
+    res.status(200).json({error: null, message: "You are now authenticatedd!!", token: token, userId: user._id});
+
+
+
+})
 
 module.exports = router;
