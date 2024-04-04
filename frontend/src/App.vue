@@ -20,5 +20,22 @@
 </script>
 
 <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
 
+.container {
+  min-height: 68.9vh;
+}
+
+a {
+  transition: .5s;
+}
+
+a:hover {
+  color: #C1B696;
+}
 </style>
