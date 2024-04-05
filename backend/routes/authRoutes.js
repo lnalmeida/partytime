@@ -65,6 +65,10 @@ router.post("/login", async (req, res) => {
         if(!user){
             return res.status(404).json({error: "There is no registered user with this email."});
         };
+
+        if(password == null) {
+            return res.status(400).json({error: "Password is required!"});
+        }
     
         const verifiedPassword = await handlePassword.decodePassword(password, user.password);
     
@@ -75,7 +79,7 @@ router.post("/login", async (req, res) => {
         const token = jwt.sign(
             //payload
             {
-                email: user.name,
+                email: user.email,
                 id: user._id
             }, 
             secret

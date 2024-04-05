@@ -57,7 +57,7 @@ router.put("/", verifyToken, async (req, res) => {
 
         const updatedUser = await User.findOneAndUpdate({_id: userId}, {$set: userToUpdate}, {new: true});
 
-        return res.status(200).json({error: null, updatedUser});
+        return res.status(200).json({error: null, updatedUser, message: "Updated successfully!"});
 
     } catch (error) {
         return res.status(404).json({error: "User not found."})

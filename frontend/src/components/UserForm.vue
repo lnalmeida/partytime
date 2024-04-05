@@ -2,6 +2,7 @@
     <div>
         <Message :msg="msg" :msgClass="msgClass" />
         <form id="user-form" @submit="page == 'Register' ? register($event) : update($event)">
+            <input type="hidden" name="id" id="id" v-model="id">
             <div class="input-container">
                 <label for="name">Nome:</label>
                 <input type="text" id="name" name="name" v-model="name" placeholder="Digite o seu nome">
@@ -24,17 +25,16 @@
 </template>
 
 <script>
-import { resolveComponent } from "vue";
 import InputSubmit from "./form/InputSubmit.vue";
 import Message from "./Message.vue";
-// import config from "dotenv";
 
 export default {
     name: "RegisterForm",
     data() {
         return {
-            name: null,
-            email: null,
+            id: this.user._id || null,
+            name: this.user.name || null,
+            email: this.user.email || null,
             password:null,
             confirmPassword: null, 
             msg: null,
@@ -93,6 +93,46 @@ export default {
                 }, 2000);
             })
             .catch(error => console.log(error));
+        },
+        async update(e) {
+            e.preventDefault();
+
+            const id = this.$store.getters.userId;  
+            const token = this.$store.getters.token;
+
+            const baseURL = process.env.VUE_APP_USER_BASE_URL;
+            const headers = {"content-type": "application/json", "auth-token": token};
+            const userData = {
+                userReqId: id,
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                confirmPassword: this.confirmPassword
+            };
+
+            const jsonData = JSON.stringify(userData);
+
+            await fetch(`${baseURL}`, {
+                method: "PUT",
+                headers: headers,
+                body: jsonData
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                
+                if(data.error) {
+                    this.msg = data.error;
+                    this.msgClass = "error";
+                } else {
+                    this.msg = data.message;
+                    this.msgClass = "success";
+                };
+
+                setTimeout(() => {
+                        this.msg = null;
+                }, 2000);
+            })
+            .catch(error => console.log(error));        
         }
     }
 }
