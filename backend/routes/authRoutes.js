@@ -58,31 +58,33 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const {email, password} = req.body;
-    const user = await User.findOne({email: email});
-    if(!user){
-        return res.status(404).json({error: "There is no registered user with this email."});
+    try {
+        
+        const {email, password} = req.body;
+        const user = await User.findOne({email: email});
+        if(!user){
+            return res.status(404).json({error: "There is no registered user with this email."});
+        };
+    
+        const verifiedPassword = await handlePassword.decodePassword(password, user.password);
+    
+        if(!verifiedPassword) {
+            return res.status(400).json({error: "The password is incorrect."});
+        };
+        //create token
+        const token = jwt.sign(
+            //payload
+            {
+                email: user.name,
+                id: user._id
+            }, 
+            secret
+        );
+        //return token
+        res.status(200).json({error: null, message: "You are now authenticatedd!!", token: token, userId: user._id});
+    } catch (error) {
+        res.status(400).json({error: error});
     };
-
-    const verifiedPassword = await handlePassword.decodePassword(password, user.password);
-
-    if(!verifiedPassword) {
-        return res.status(400).json({error: "The password is incorrect."});
-    };
-    //create token
-    const token = jwt.sign(
-        //payload
-        {
-            email: user.name,
-            id: user._id
-        }, 
-        secret
-    );
-    //return token
-    res.status(200).json({error: null, message: "You are now authenticatedd!!", token: token, userId: user._id});
-
-
-
 })
 
 module.exports = router;

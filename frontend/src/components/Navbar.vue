@@ -7,7 +7,7 @@
     <div id="nav-links">
         <router-link to="/">Home</router-link> 
         <router-link to="/about">Entrar</router-link>
-        <router-link to="/about">Registrar</router-link>
+        <router-link to="/register">Registrar</router-link>
     </div>
  </div>
 </template>
