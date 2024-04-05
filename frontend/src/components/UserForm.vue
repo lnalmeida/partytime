@@ -79,6 +79,7 @@ export default {
                     this.msgClass = "success";
 
                     //emit event for auth an user (vuex)
+                    this.$store.commit("authenticate", {token: data.token, userId: data.userId});
 
                 }
 
