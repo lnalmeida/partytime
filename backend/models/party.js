@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const PartySchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
     },
     description: {
         type: String,

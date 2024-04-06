@@ -76,14 +76,14 @@ router.get("/:userId/private", verifyToken, async (req, res) => {
 
 
 //create a new party
-router.post("/", verifyToken, upload.fields([{name: "photos"}]), async (req, res) => {
+router.post("/", verifyToken, upload.array("photos"), async (req, res) => {
     try {
         const token = req.header("auth-token");
         const user = await getUserByToken(token);
         if(!token || !user) return res.status(401).json({error: "access denied!"});
 
-
-        const {title, description, partyDate} = req.body;
+        const {title, description, party_date} = req.body;
+        console.log(title, description, party_date)
 
         let files = [];
 
@@ -91,10 +91,8 @@ router.post("/", verifyToken, upload.fields([{name: "photos"}]), async (req, res
             files = req.files.photos;
         };
 
-        //validations
-        if(title == null || description == null || partyDate == null){
-            return res.status(400).json({error: "Title, Description and Party Dater are required."});
-        };
+        console.log("não validou enviando pelo frontend")
+
 
         //create photos array image uri
         let photos = [];
@@ -108,12 +106,16 @@ router.post("/", verifyToken, upload.fields([{name: "photos"}]), async (req, res
         const party = new Party( {
             title, 
             description, 
-            partyDate, 
+            partyDate: party_date,
             photos, 
             isPrivate: req.body.isPrivate, 
             userId : user._id.toString()
         });
-        
+        //validations
+        if(title === null || title === "" || description === null || description === "" || party.partyDate == null || party.partyDate == undefined){
+            return res.status(400).json({error: "Title, Description and Party Date are required."});
+        };
+
         const newParty = await party.save();
         res.status(201).json({error: null, message: "Party registered successfully!!", newParty});
     } catch (error) {
@@ -123,13 +125,13 @@ router.post("/", verifyToken, upload.fields([{name: "photos"}]), async (req, res
 
 //update a party
 router.put("/:id", verifyToken, async (req, res) => {
-    // try {
+    try {
         const token = req.header("auth-token");
         const user = await getUserByToken(token);
         const reqPartyId = req.params.id;
         if(!token || !user) return res.status(401).json({error: "Access denied!"});
     
-        const {title, description, partyDate} = req.body;
+        const {title, description, party_date} = req.body;
     
         let files = [];
     
@@ -138,7 +140,7 @@ router.put("/:id", verifyToken, async (req, res) => {
         };
         
         //validations
-        if(title == null || description == null || partyDate == null){
+        if(title == null || description == null || party_date == null){
             return res.status(400).json({error: "Title, Description and Party Dater are required."});
         };
     
@@ -153,7 +155,7 @@ router.put("/:id", verifyToken, async (req, res) => {
         const partyToUpdate = {
             title, 
             description, 
-            partyDate, 
+            party_date, 
             photos, 
             isPrivate: req.body.isPrivate, 
             userId : user._id.toString()
@@ -163,9 +165,9 @@ router.put("/:id", verifyToken, async (req, res) => {
 
         return res.status(200).json({error: null, updatedPArty});
         
-    // } catch (error) {
-    //     return res.status(404).json({error: "Party not found."})
-    // }    
+    } catch (error) {
+        return res.status(404).json({error: "Party not found."})
+    }    
 
 });
 
