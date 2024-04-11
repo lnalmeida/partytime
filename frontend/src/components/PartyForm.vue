@@ -1,6 +1,7 @@
 <template>
     <div>
         <Message :msg="msg" :msgClass="msgClass" />
+        <span class="loader" v-if="this.isFetching"></span>
         <form id="party-form" enctype="multipart/form-data" @submit="page === 'newparty' ? createParty($event) : updateParty($event)">
             <input type="hidden" name="id" id="id" v-model="id" />
             <input type="hidden" name="user_id" id="user_id" v-model="user_id" />
@@ -63,7 +64,8 @@ export default {
             user_id: this.party.userId || null,
             msg: null,
             msgClass: null,
-            showMiniImages: true
+            showMiniImages: true,
+            isFetching: false
         }
     },
     methods: {
@@ -90,9 +92,7 @@ export default {
                 };
             };
 
-            console.log(this.photos)
-
-
+            this.isFetching = true;
             await fetch(baseUrl, {
                 method: "POST",
                 headers: headers,
@@ -103,10 +103,12 @@ export default {
                 let success = false;
 
                 if(data.error) {
+                    this.isFetching = false;
                     this.msg = data.error;
                     this.msgClass = "error";
                 } else {
                     success = true;
+                    this.isFetching = false
                     this.msg = data.message;
                     this.msgClass = "success";
                 }
@@ -122,8 +124,6 @@ export default {
 
             })
             .catch(error => console.log(error));
-
-
         },
         async updateParty(e) {
             e.preventDefault();
@@ -200,6 +200,136 @@ export default {
     .file-input:hover span {
       background-color: #0056b3;
     }
+
+    /* loader css 2 */
+/*     
+    .loader {
+          width: 20px;
+          height: 58px;
+          display: inline-block;
+          position: relative;
+          border: 2px solid #FFF;
+          box-sizing: border-box;
+          color: rgba(255, 61, 0, 0.9);
+          border-radius: 20px 20px 4px 4px;
+          background: #fff;
+          animation: fill 2s linear infinite alternate;
+        }
+        .loader::after {
+          content: '';
+          box-sizing: border-box;
+          position: absolute;
+          left: 50%;
+          top: 0%;
+          transform: translate(-50% , -95%);
+          border: 2px solid #FFF;
+          border-bottom: none;
+          background: #fff;
+          width: 10px;
+          height: 20px;
+          animation: fillNeck 2s linear infinite alternate;
+        }
+
+        @keyframes fill {
+          0% { box-shadow: 0 0  inset }
+          50% , 100% { box-shadow: 0 -98px inset }
+        }
+
+
+        @keyframes fillNeck {
+          0% , 50%{ box-shadow: 0 0  inset }
+          100% { box-shadow: 0 -20px inset }
+        }
+     */
+
+    /* loader CSS 1 */
+    /* .loader {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: inline-block;
+        border-top: 4px solid #FFF;
+        border-right: 4px solid transparent;
+        box-sizing: border-box;
+        animation: rotation 1s linear infinite;
+        }
+        .loader::after {
+        content: '';  
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border-left: 4px solid #FF3D00;
+        border-bottom: 4px solid transparent;
+        animation: rotation 0.5s linear infinite reverse;
+        }
+        @keyframes rotation {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }  */
+
+
+    /* Loader CSS 3 */
+
+    .loader {
+        width: 175px;
+        height: 80px;
+        display: block;
+        margin: auto;
+        background-image: radial-gradient(circle 25px at 25px 25px, #FFF 100%, transparent 0), radial-gradient(circle 50px at 50px 50px, #FFF 100%, transparent 0), radial-gradient(circle 25px at 25px 25px, #FFF 100%, transparent 0), linear-gradient(#FFF 50px, transparent 0);
+        background-size: 50px 50px, 100px 76px, 50px 50px, 120px 40px;
+        background-position: 0px 30px, 37px 0px, 122px 30px, 25px 40px;
+        background-repeat: no-repeat;
+        position: relative;
+        box-sizing: border-box;
+    }
+    .loader::after {
+        content: '';  
+        left: 50%;
+        bottom: 0;
+        transform: translate(-50%, 0);
+        position: absolute;
+        border: 15px solid transparent;
+        border-top-color: #3f8ce9;
+        box-sizing: border-box;
+        animation: fadePush 1s linear infinite;
+    }
+    .loader::before {
+        content: '';  
+        left: 50%;
+        bottom: 30px;
+        transform: translate(-50%, 0);
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        background: #3f8ce9;
+        box-sizing: border-box;
+        animation: fadePush 1s linear infinite;
+    }
+
+    @keyframes fadePush {
+        0% {
+            transform: translate(-50%, -15px);
+            opacity: 0;
+        }
+        50% {
+            transform: translate(-50%, 0px);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(-50%, 15px);
+            opacity: 0;
+        }
+    }
+
+
 
     /* checkbox CSS */
     .toggler-wrapper {
