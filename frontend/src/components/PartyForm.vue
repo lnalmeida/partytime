@@ -31,7 +31,7 @@
             <div class="input-container">
                <label for="is_private">Tipo do evento:</label>
                <label class="toggler-wrapper style-23">
-                    <input type="checkbox" name="is_private" checked id="is_private" v-model="is_private">
+                    <input type="checkbox" name="is_private" ref="privacy" id="is_private" v-model="is_private" />
                     <div class="toggler-slider">
                       <div class="toggler-knob"></div>
                     </div>
@@ -60,7 +60,7 @@ export default {
             description: this.party.description || null,
             party_date: this.party.partyDate || null,
             photos: this.party.photos || [],
-            is_private: this.party.isPrivate || null,
+            is_private: this.party.isPrivate || false,
             user_id: this.party.userId || null,
             msg: null,
             msgClass: null,
@@ -345,7 +345,7 @@ export default {
     }
 
     .toggler-wrapper input[type="checkbox"]:checked+.toggler-slider {
-    	background-color: #44cc66;
+    	background-color: #eb4f37;
     }
 
     .toggler-wrapper .toggler-slider {
@@ -367,7 +367,7 @@ export default {
     }
     .toggler-wrapper.style-23 input[type="checkbox"]:checked+.toggler-slider {
     	background-color: transparent;
-    	border-color: #44cc66;
+    	border-color: #eb4f37;
     }
 
     .toggler-wrapper.style-23 input[type="checkbox"]:checked+.toggler-slider:before {
@@ -384,16 +384,16 @@ export default {
 
     .toggler-wrapper.style-23 input[type="checkbox"]:checked+.toggler-slider .toggler-knob {
     	left: calc(100% - 19px - 3px);
-    	background-color: #44cc66;
+    	background-color: #eb4f37;
     }
 
     .toggler-wrapper.style-23 .toggler-slider {
     	background-color: transparent;
-    	border: 2px solid #eb4f37;
+    	border: 2px solid #44cc66
     }
 
     .toggler-wrapper.style-23 .toggler-slider:before {
-    	content: 'Público';
+    	content: 'Privado';
     	position: absolute;
     	top: 4px;
     	right: -70px;
@@ -408,7 +408,7 @@ export default {
     }
 
     .toggler-wrapper.style-23 .toggler-slider:after {
-    	content: 'Privado';
+    	content: 'Público';
     	position: absolute;
     	top: 4px;
     	right: -70px;
@@ -426,7 +426,7 @@ export default {
     	border-radius: 50%;
     	left: 3px;
     	top: 1px;
-    	background-color: #eb4f37;
+    	background-color: #44cc66;
     }
 
     /* mini-images CSS */

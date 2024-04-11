@@ -83,7 +83,7 @@ router.post("/", verifyToken, upload.any("photos"), async (req, res) => {
         const user = await getUserByToken(token);
         if(!token || !user) return res.status(401).json({error: "access denied!"});
 
-        const {title, description, party_date} = req.body;
+        const {title, description, party_date, is_private} = req.body;
         console.log(title, description, party_date)
 
         //validations
@@ -117,7 +117,7 @@ router.post("/", verifyToken, upload.any("photos"), async (req, res) => {
             description, 
             partyDate: party_date,
             photos: photos, 
-            isPrivate: req.body.isPrivate, 
+            isPrivate: is_private, 
             userId : user._id.toString()
         });
 
