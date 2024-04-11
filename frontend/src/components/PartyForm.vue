@@ -7,21 +7,21 @@
             <input type="hidden" name="user_id" id="user_id" v-model="user_id" />
             <div class="input-container">
                 <label for="title">Título do evento:</label>
-                <input type="text" name="title" id="title" v-model="title" placeholder="Digite o Título do seu evneto" />
+                <input type="text" name="title" id="title" v-model="title" placeholder="Digite o Título do seu evneto" @blur="enableControl"/>
             </div>
             <div class="input-container">
                 <label for="description">O que vai rolar no evento:</label>
-                <textarea rows="5" type="text" name="description" id="description" v-model="description" placeholder="Descreva seu evento, incluindo local, hora atrações e mais"></textarea>
+                <textarea rows="5" type="text" name="description" id="description" v-model="description" placeholder="Descreva seu evento, incluindo local, hora atrações e mais" @blur="enableControl"></textarea>
             </div>
             <div class="input-container">
                 <label for="party_date">Data do evento:</label>
-                <input type="date" name="party_date" id="party_date" v-model="party_date" />
+                <input type="date" name="party_date" id="party_date" v-model="party_date" @blur="enableControl"/>
             </div>
             <div class="input-container">
                 <label for="photos">Imagens:</label>
                 <label for="photos" class="file-input">
                     <span>Selecionar arquivos</span>
-                    <input type="file" multiple="multiple" name="photos" id="photos" ref="file" @change="onChange"/>
+                    <input disabled type="file" multiple="multiple" name="photos" id="photos" ref="file" @change="onChange"/>
                 </label>
             </div>
             <div v-if="page === 'editparty' && showMiniImages" class="mini-images">
@@ -65,10 +65,18 @@ export default {
             msg: null,
             msgClass: null,
             showMiniImages: true,
-            isFetching: false
+            isFetching: false,
+            isFormValid: false
         }
     },
     methods: {
+        enableControl(e){
+            if(title && description && this.party_date) {
+                document.querySelector("input[type='file']").disabled = false;
+            } else {
+                 document.querySelector("input[type='file']").disabled = true;
+            }
+        },
         onChange(e) {
             this.photos = e.target.files;
             this.showMiniImages = false;
@@ -80,12 +88,12 @@ export default {
             const headers = {"auth-token": token};
             
             const formData = new FormData();
-        
+            
             formData.append('title', this.title);
             formData.append('description', this.description);
             formData.append('party_date', this.party_date);
             formData.append('is_private', this.is_private);
-
+        
             if(this.photos.length > 0) {
                 for(const i of Object.keys(this.photos)) {
                     formData.append('photos', this.photos[i]);

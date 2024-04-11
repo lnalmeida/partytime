@@ -90,16 +90,12 @@ router.post("/", verifyToken, upload.any("photos"), async (req, res) => {
         if(_.isEmpty(title)  || _.isEmpty(description)  ||  party_date.length === 0){
             return res.status(400).json({error: "Title, Description and Party Date are required."});
         };
-        console.log(req.files)
 
         let files = [];
 
         if(req.files) {
             files = req.files;
         };
-
-
-
 
         //create photos array image uri
         let photos = [];
@@ -122,14 +118,16 @@ router.post("/", verifyToken, upload.any("photos"), async (req, res) => {
         });
 
         const newParty = await party.save();
+        
         res.status(201).json({error: null, message: "Party registered successfully!!", newParty});
     } catch (error) {
         if(error && error.errors.partyDate) {
+            photos = [];
             return res.status(400).json({error: "Title, Description and Party Date are required."});
         };
         res.status(400).json({error: error});
     };
-});
+}, upload.any("photos"));
 
 //update a party
 router.put("/:id", verifyToken, async (req, res) => {
