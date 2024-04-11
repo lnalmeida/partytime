@@ -30,7 +30,7 @@
             <div class="input-container">
                <label for="is_private">Tipo do evento:</label>
                <label class="toggler-wrapper style-23">
-                    <input type="checkbox" name="is_private" id="is_private" v-model="is_private">
+                    <input type="checkbox" name="is_private" checked id="is_private" v-model="is_private">
                     <div class="toggler-slider">
                       <div class="toggler-knob"></div>
                     </div>
@@ -83,7 +83,6 @@ export default {
             formData.append('description', this.description);
             formData.append('party_date', this.party_date);
             formData.append('is_private', this.is_private);
-            formData.append('photos', this.photos);
 
             if(this.photos.length > 0) {
                 for(const i of Object.keys(this.photos)) {

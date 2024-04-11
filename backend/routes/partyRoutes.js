@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
+const _ = require("lodash");
 
 const Party = require("../models/party");
 const User = require("../models/user");
@@ -76,7 +77,7 @@ router.get("/:userId/private", verifyToken, async (req, res) => {
 
 
 //create a new party
-router.post("/", verifyToken, upload.array("photos"), async (req, res) => {
+router.post("/", verifyToken, upload.any("photos"), async (req, res) => {
     try {
         const token = req.header("auth-token");
         const user = await getUserByToken(token);
@@ -85,20 +86,28 @@ router.post("/", verifyToken, upload.array("photos"), async (req, res) => {
         const {title, description, party_date} = req.body;
         console.log(title, description, party_date)
 
+        //validations
+        if(_.isEmpty(title)  || _.isEmpty(description)  ||  party_date.length === 0){
+            return res.status(400).json({error: "Title, Description and Party Date are required."});
+        };
+        console.log(req.files)
+
         let files = [];
 
         if(req.files) {
-            files = req.files.photos;
+            files = req.files;
         };
 
-        console.log("não validou enviando pelo frontend")
+
 
 
         //create photos array image uri
         let photos = [];
         if(files && files.length > 0) {
             files.forEach((photo, i) => {
-                photos[i] = photo.path;
+                if(photo && photo.location){
+                    photos[i] = photo.location;
+                }
             });
         };
 
@@ -107,18 +116,17 @@ router.post("/", verifyToken, upload.array("photos"), async (req, res) => {
             title, 
             description, 
             partyDate: party_date,
-            photos, 
+            photos: photos, 
             isPrivate: req.body.isPrivate, 
             userId : user._id.toString()
         });
-        //validations
-        if(title === null || title === "" || description === null || description === "" || party.partyDate == null || party.partyDate == undefined){
-            return res.status(400).json({error: "Title, Description and Party Date are required."});
-        };
 
         const newParty = await party.save();
         res.status(201).json({error: null, message: "Party registered successfully!!", newParty});
     } catch (error) {
+        if(error && error.errors.partyDate) {
+            return res.status(400).json({error: "Title, Description and Party Date are required."});
+        };
         res.status(400).json({error: error});
     };
 });
