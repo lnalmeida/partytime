@@ -104,7 +104,7 @@ import Message from './Message.vue';
     .news-card__image {
         width: fit-content;
         height: auto;
-        display: flex;
+        display: block;
         object-fit: cover;
         transition: transform 3s ease;
         -webkit-backface-visibility: hidden;
