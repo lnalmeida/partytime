@@ -66,7 +66,6 @@ export default {
             msgClass: null,
             showMiniImages: true,
             isFetching: false,
-            isFormValid: false
         }
     },
     methods: {

@@ -35,7 +35,6 @@ router.get("/:userId/all", verifyToken, async (req, res) => {
     try {
         const token = req.header("auth-token");
         const user = await getUserByToken(token);
-        console.log(user);
         if(!token || !user) return res.status(401).json({error: "Access denied!"});
         const partyUserId = user._id.toString();
         const partyByUserId = await Party.find({userId: partyUserId}, {__v: 0}). sort({partyDate: 1});
