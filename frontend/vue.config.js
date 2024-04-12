@@ -6,6 +6,16 @@ module.exports = defineConfig({
     plugins: [
       new Dotenv()
     ]
+  //   module: {
+  //     rules: [
+  //       {
+  //         test: /\.svg$/,
+  //         use: [
+  //           'vue-loader',
+  //           'vue-svg-loader',
+  //         ],
+  //       },
+  //     ],
+  //   },
   }
-
 })

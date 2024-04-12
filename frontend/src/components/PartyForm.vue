@@ -11,7 +11,8 @@
             </div>
             <div class="input-container">
                 <label for="description">O que vai rolar no evento:</label>
-                <textarea rows="5" type="text" name="description" id="description" v-model="description" placeholder="Descreva seu evento, incluindo local, hora atrações e mais" @blur="enableControl"></textarea>
+                <textarea rows="5" type="text" name="description" id="description" v-model="description" placeholder="Descreva seu evento, incluindo local, hora atrações e mais" @blur="enableControl" @input="limitCharacters" :maxCharacters="maxCharacters"></textarea>
+                <p>{{ remainingChararcters }} caracteres restantes</p>
             </div>
             <div class="input-container">
                 <label for="party_date">Data do evento:</label>
@@ -66,9 +67,15 @@ export default {
             msgClass: null,
             showMiniImages: true,
             isFetching: false,
-        }
+            maxCharacters: 300,
+            remainingChar: 350        }
     },
     methods: {
+        limitCharacters(){
+            if(this.description.length >= this.maxCharacters) {
+                this.description = this.description.substring(0, this.maxCharacters);
+            };
+        },
         enableControl(e){
             if(title && description && this.party_date) {
                 document.querySelector("input[type='file']").disabled = false;
@@ -135,6 +142,15 @@ export default {
         async updateParty(e) {
             e.preventDefault();
             console.log("Party updated");
+        }
+    }, 
+    computed: {
+        remainingChararcters() {
+            this.remainingChar = this,this.maxCharacters;
+            if(this.description && this.description.length) {
+                this.remainingChar =  this.maxCharacters - this.description.length;
+                return this.remainingChar;
+            }
         }
     }
 }

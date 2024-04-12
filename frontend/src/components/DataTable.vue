@@ -9,8 +9,13 @@
                 <h2 class="news-card__title">{{party.title}}</h2>
                 <div class="news-card__post-date">{{ party.partyDate.split("T")[0] }}</div>
                 <div class="news-card__details-wrapper">
-                  <p class="news-card__excerpt">{{ party.description }}&hellip;</p>
-                  <a href="#" class="news-card__read-more">Read more <i class="fas fa-long-arrow-alt-right"></i></a>
+                    <p class="news-card__excerpt">{{ party.description }}&hellip;</p>
+                    <a href="#" class="news-card__delete_button">
+                        <div class="delete_button">
+                            <i class="bx bx-trash"></i>
+                            <p>Excluir</p>
+                        </div>
+                    </a>
                 </div>
               </div>
             </div>
@@ -33,21 +38,39 @@ import Message from './Message.vue';
                 msg: null,
                 msgClass: null
             }
-        }
+        }, 
     }
 </script>
 
 <style scoped>
-/* * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Open Sans";
-} */
+    .delete_button {
+        color: #f1f18f;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.2rem;
+        justify-content: space-around;
+        transition: all 0.5s;
+    }
 
-/* body {
-  background-color: #555;
-} */
+    /* .delete_button i {
+        color: yellow;
+        height: 1em;
+        margin-top: 0;
+        pointer-events: none;
+        vertical-align: middle;
+        font-size: 1.5rem;
+    }
+     */
+
+    /* .delete_button p {
+        font-size: 1rem;
+        color: yellow;
+    } */
+
+    .delete_button:hover {
+        color: #ed4141;
+    }
 
     .content-wrapper {
         margin: 0 auto;
@@ -159,7 +182,7 @@ import Message from './Message.vue';
      .news-card__excerpt {
         font-weight: 300;
     }
-     .news-card__read-more {
+     .news-card__delete_button {
         background: black;
         color: #bbb;
         display: block;
@@ -177,7 +200,7 @@ import Message from './Message.vue';
         z-index: 5;
     }
 
-    .news-card__read-more i {
+    /* .news-card__read-more box-icon {
         position: relative;
         left: 0.2rem;
         color: #888;
@@ -186,9 +209,9 @@ import Message from './Message.vue';
         backface-visibility: hidden;
     }
 
-    .news-card__read-more:hover i {
+    .news-card__read-more:hover box-icon {
         left: 0.5rem;
         color: yellow;
-    }
+    } */
 
 </style>
