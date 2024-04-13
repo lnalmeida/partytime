@@ -3,21 +3,29 @@
         <Message :msg="msg" :msgClass="msgClass" />
         <div class="content-wrapper"> 
             <div class="news-card" v-for="(party, index) in parties" :key="index">
-              <a href="#" class="news-card__card-link"></a>
-              <img :src="party.photos[0]" alt="" class="news-card__image">
-              <div class="news-card__text-wrapper">
-                <h2 class="news-card__title">{{party.title}}</h2>
-                <div class="news-card__post-date">{{ party.partyDate.split("T")[0] }}</div>
-                <div class="news-card__details-wrapper">
-                    <p class="news-card__excerpt">{{ party.description }}&hellip;</p>
-                    <a href="#" class="news-card__delete_button">
-                        <div class="delete_button">
-                            <i class="bx bx-trash"></i>
-                            <p>Excluir</p>
+                <a href="#" class="news-card__card-link"></a>
+                    <img :src="party.photos[0]" alt="" class="news-card__image">
+                    <div class="news-card__text-wrapper">
+                      <h2 class="news-card__title">{{party.title}}</h2>
+                      <div class="news-card__post-date">{{ party.partyDate.split("T")[0] }}</div>
+                      <div class="news-card__details-wrapper">
+                        <p class="news-card__excerpt">{{ party.description }}&hellip;</p>
+                        <div class="actions-wrapper">
+                            <router-link class="news-card__show_button" :to="`/party/${party._id}`">
+                                <div class="show_button">
+                                    <i class="bx bx-show"></i>
+                                    <p>Ver</p>
+                                </div>
+                            </router-link>
+                            <a href="#" class="news-card__delete_button" @click="remove(party._id)">
+                                <div class="delete_button">
+                                    <i class="bx bx-trash"></i>
+                                    <p>Excluir</p>
+                                </div>
+                            </a>
                         </div>
-                    </a>
-                </div>
-              </div>
+                      </div>
+                    </div>
             </div>
         </div>
 
@@ -39,10 +47,49 @@ import Message from './Message.vue';
                 msgClass: null
             }
         }, 
+        methods: {
+            async remove(id) {
+                const baseUrl = process.env.VUE_APP_PARTIES_BASE_URL;
+                const token = this.$store.getters.token;
+                const headers= {"auth-token": token};
+                await fetch(`${baseUrl}/${id}`, {
+                    method: "DELETE",
+                    headers,
+                })
+                .then(resp => resp.json())
+                .then(data => {
+                    let success = false;
+
+                    if(data.error) {
+                        this.isFetching = false;
+                        this.msg = data.error;
+                        this.msgClass = "error";
+                    } else {
+                        success = true;
+                        this.isFetching = false
+                        this.msg = data.message;
+                        this.msgClass = "success";                   
+                    }
+
+                    setTimeout(() => {
+                        this.$parent.getPartiesByUser();
+                        this.msg = null;
+                    }, 2000)
+                })
+                .catch(error => console.log(error.message));
+            }
+        }
     }
 </script>
 
 <style scoped>
+
+    .actions-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
     .delete_button {
         color: #f1f18f;
         display: flex;
@@ -53,23 +100,22 @@ import Message from './Message.vue';
         transition: all 0.5s;
     }
 
-    /* .delete_button i {
-        color: yellow;
-        height: 1em;
-        margin-top: 0;
-        pointer-events: none;
-        vertical-align: middle;
-        font-size: 1.5rem;
-    }
-     */
-
-    /* .delete_button p {
-        font-size: 1rem;
-        color: yellow;
-    } */
-
     .delete_button:hover {
         color: #ed4141;
+    }
+
+    .show_button {
+        color: #f1f18f;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+        font-size: 1.2rem;
+        justify-content: space-around;
+        transition: all 0.5s;
+    }
+
+    .show_button:hover {
+        color: #7d8cec;
     }
 
     .content-wrapper {
@@ -182,7 +228,7 @@ import Message from './Message.vue';
      .news-card__excerpt {
         font-weight: 300;
     }
-     .news-card__delete_button {
+    .news-card__delete_button {
         background: black;
         color: #bbb;
         display: block;
@@ -200,18 +246,22 @@ import Message from './Message.vue';
         z-index: 5;
     }
 
-    /* .news-card__read-more box-icon {
-        position: relative;
-        left: 0.2rem;
-        color: #888;
-        transition: left 0.5s ease, color 0.6s ease;
+    .news-card__show_button {
+        background: black;
+        color: #bbb;
+        display: block;
+        padding: 0.4rem 0.6rem;
+        border-radius: 0.3rem;
+        margin-top: 1rem;
+        border: 1px solid #444;
+        font-size: 0.8rem;
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
+        text-decoration: none;
+        width: 7rem;
+        margin-right: auto;
+        position: relative;
+        z-index: 5;
     }
-
-    .news-card__read-more:hover box-icon {
-        left: 0.5rem;
-        color: yellow;
-    } */
 
 </style>

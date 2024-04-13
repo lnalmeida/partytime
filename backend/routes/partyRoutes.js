@@ -189,7 +189,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
         if(!token || !user) return res.status(401).json({error: "Access denied!"});
     
         await Party.findOneAndDelete({_id: reqPartyId});
-        return res.status(204);
+        return res.status(200).json({error: null, message: "Party removed" });
     } catch (error) {
         res.status(500).json({error: "An error occurred during party deletion."})
     };

@@ -52,6 +52,14 @@ const routes = [
     }
   },
   {
+    path: '/party/:id',
+    name: 'Party',
+    component: () => import(/* webpackChunkName: "newParty" */ '../views/PartyView.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/newParty',
     name: 'NewParty',
     component: () => import(/* webpackChunkName: "newParty" */ '../views/NewPartyView.vue'),
@@ -59,6 +67,7 @@ const routes = [
       requiresAuth: true
     }
   }
+
 ]
 
 const router = createRouter({
